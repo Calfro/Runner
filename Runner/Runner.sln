@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner\Runner.csproj", "{13BBC141-4766-4769-9F16-34D5C3A5BF24}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "RunnerContent", "Runner\RunnerContent\RunnerContent.contentproj", "{08081CA5-3C3F-47EC-87C8-9257EF7F89AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{13BBC141-4766-4769-9F16-34D5C3A5BF24}.Debug|x86.ActiveCfg = Debug|x86
+		{13BBC141-4766-4769-9F16-34D5C3A5BF24}.Debug|x86.Build.0 = Debug|x86
+		{13BBC141-4766-4769-9F16-34D5C3A5BF24}.Release|x86.ActiveCfg = Release|x86
+		{13BBC141-4766-4769-9F16-34D5C3A5BF24}.Release|x86.Build.0 = Release|x86
+		{08081CA5-3C3F-47EC-87C8-9257EF7F89AB}.Debug|x86.ActiveCfg = Debug|x86
+		{08081CA5-3C3F-47EC-87C8-9257EF7F89AB}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
