@@ -32,9 +32,11 @@ namespace Runner
         Player player;
 
         bool jumping;
+        bool falling;
+        float startY;
         float jumpHeight;
         float maxJump;
-        float startY;
+        int jumpTimer;
 
         public RunnerGame()
         {
@@ -53,14 +55,17 @@ namespace Runner
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            player = new Player(new Vector2(100, 350));
+            player = new Player(new Vector2(100, 150));
 
             prevKeyboard = Keyboard.GetState();
             prevMouse = Mouse.GetState();
 
             jumping = false;
-            maxJump = 20;
+            falling = false;
+            maxJump = 25;
             jumpHeight = 0;
+            jumpTimer = 40;
+            startY = 0;
 
             base.Initialize();
         }
@@ -103,20 +108,41 @@ namespace Runner
             currentKeyboard = Keyboard.GetState();
             currentMouse = Mouse.GetState();
 
+            #region Jumping
             //Jump!
-            if (currentKeyboard.IsKeyDown(Keys.Space))
+            if (currentKeyboard.IsKeyDown(Keys.Space) && !prevKeyboard.IsKeyDown(Keys.Space) && !jumping)
             {
-                if (jumpHeight < maxJump)
+                jumping = true;
+                startY = player.Pos.Y;
+            }
+            if (jumping)
+            {
+                jumpTimer--;
+                if (jumpTimer == 0)
                 {
-                    if (jumpHeight == 0)
-                        jumping = true;
-
-                    jumpHeight++;
-                    player.Pos = new Vector2(player.Pos.X, player.Pos.Y + jumpHeight);
+                    jumping = false;
+                    falling = true;
+                    jumpTimer = 40;
                 }
             }
+            if (currentKeyboard.IsKeyDown(Keys.Space) && jumping)
+            {
+                jumpHeight++;
+                if(jumpHeight < maxJump)
+                    player.Pos = new Vector2(player.Pos.X, player.Pos.Y - 3);
+            }
+            if (falling)
+            {
+                player.Pos = new Vector2(player.Pos.X, player.Pos.Y + 5);
 
-            
+                if (player.Pos.Y >= startY)
+                {
+                    falling = false;
+                    jumpHeight = 0;
+                    player.Pos = new Vector2(player.Pos.X, startY);
+                }
+            }
+            #endregion
 
             //end stuff
             prevKeyboard = Keyboard.GetState();
