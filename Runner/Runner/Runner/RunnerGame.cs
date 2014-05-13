@@ -80,6 +80,8 @@ namespace Runner
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             skyBG = Content.Load<Texture2D>(@"Backgrounds//skyBG");
+            waterBG = Content.Load<Texture2D>(@"Backgrounds//waterBG");
+            bubble = Content.Load<Texture2D>(@"Misc//bubble");
             playerTex = Content.Load<Texture2D>(@"Player//player");
 
             // TODO: use this.Content to load your game content here
@@ -161,8 +163,9 @@ namespace Runner
             // TODO: Add your drawing code here
 
             spriteBatch.Begin();
-            spriteBatch.Draw(skyBG, new Rectangle(0, 0, 1280, 720), Color.White);
+            spriteBatch.Draw(waterBG, new Rectangle(0, 0, 1280, 720), Color.White);
             spriteBatch.Draw(playerTex, player.Rect, Color.White);
+            spriteBatch.Draw(bubble, new Rectangle(400, 100, 64, 64), Color.White);
             spriteBatch.End();
 
             base.Draw(gameTime);
