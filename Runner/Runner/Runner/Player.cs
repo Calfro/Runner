@@ -15,11 +15,13 @@ namespace Runner
     {
         protected Vector2 pos;
         protected Rectangle rect;
+        bool isColliding;
 
         public Player(Vector2 p)
         {
             pos = p;
             rect = new Rectangle((int)p.X, (int)p.Y, 40, 128);
+            isColliding = false;
         }
 
         public Vector2 Pos
@@ -33,6 +35,18 @@ namespace Runner
                 this.pos = value;
                 this.rect.X = (int)value.X;
                 this.rect.Y = (int)value.Y;
+            }
+        }
+
+        public Boolean IsColliding
+        {
+            get
+            {
+                return isColliding;
+            }
+            set
+            {
+                this.isColliding = value;
             }
         }
 

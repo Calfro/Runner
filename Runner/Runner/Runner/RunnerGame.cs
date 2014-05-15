@@ -29,6 +29,8 @@ namespace Runner
         MouseState currentMouse;
         MouseState prevMouse;
 
+        Platform[] platforms;
+
         Player player;
 
         bool jumping;
@@ -55,16 +57,25 @@ namespace Runner
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            player = new Player(new Vector2(100, 150));
+            player = new Player(new Vector2(100, 100));
 
             prevKeyboard = Keyboard.GetState();
             prevMouse = Mouse.GetState();
+
+
+            //platforms init creation
+            platforms = new Platform[15];
+            for (int i = 0; i < 15; i++)
+            {
+                platforms[i] = new Platform(Size.medium, new Vector2(90 + (i * 200), 250));
+            }
+
 
             jumping = false;
             falling = false;
             maxJump = 25;
             jumpHeight = 0;
-            jumpTimer = 40;
+            jumpTimer = 60;
             startY = 0;
 
             base.Initialize();
@@ -110,6 +121,8 @@ namespace Runner
             currentKeyboard = Keyboard.GetState();
             currentMouse = Mouse.GetState();
 
+            
+
             #region Jumping
             //Jump!
             if (currentKeyboard.IsKeyDown(Keys.Space) && !prevKeyboard.IsKeyDown(Keys.Space) && !jumping)
@@ -117,6 +130,17 @@ namespace Runner
                 jumping = true;
                 startY = player.Pos.Y;
             }
+
+            player.IsColliding = false;
+            foreach (Platform p in platforms)
+            {
+                if (p.getCollisionRect().Contains(player.Rect.Center.X, player.Rect.Bottom)) 
+                {
+                    player.IsColliding = true;
+                    startY = p.Bounds.Y - player.Rect.Height;
+                }
+            }
+
             if (jumping)
             {
                 jumpTimer--;
@@ -124,7 +148,7 @@ namespace Runner
                 {
                     jumping = false;
                     falling = true;
-                    jumpTimer = 40;
+                    jumpTimer = 60;
                 }
             }
             if (currentKeyboard.IsKeyDown(Keys.Space) && jumping)
@@ -146,6 +170,15 @@ namespace Runner
             }
             #endregion
 
+            foreach (Platform p in platforms)
+            {
+                p.Pos = new Vector2(p.Pos.X - 5, p.Pos.Y);
+            }
+
+
+            if (!jumping && !player.IsColliding)
+                player.Pos = new Vector2(player.Pos.X, player.Pos.Y + 4);
+
             //end stuff
             prevKeyboard = Keyboard.GetState();
             prevMouse = Mouse.GetState();
@@ -165,7 +198,11 @@ namespace Runner
             spriteBatch.Begin();
             spriteBatch.Draw(waterBG, new Rectangle(0, 0, 1280, 720), Color.White);
             spriteBatch.Draw(playerTex, player.Rect, Color.White);
-            spriteBatch.Draw(bubble, new Rectangle(400, 100, 64, 64), Color.White);
+            foreach (Platform p in platforms)
+            {
+                spriteBatch.Draw(bubble, p.Bounds, Color.White);
+            }
+            
             spriteBatch.End();
 
             base.Draw(gameTime);
