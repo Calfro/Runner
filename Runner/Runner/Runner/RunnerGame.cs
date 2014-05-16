@@ -29,6 +29,8 @@ namespace Runner
         MouseState currentMouse;
         MouseState prevMouse;
 
+        SpriteFont font;
+
         Platform[] platforms;
 
         Player player;
@@ -94,6 +96,7 @@ namespace Runner
             waterBG = Content.Load<Texture2D>(@"Backgrounds//waterBG");
             bubble = Content.Load<Texture2D>(@"Misc//bubble");
             playerTex = Content.Load<Texture2D>(@"Player//player");
+            font = Content.Load<SpriteFont>("font");
 
             // TODO: use this.Content to load your game content here
         }
@@ -137,7 +140,7 @@ namespace Runner
                 if (p.getCollisionRect().Contains(player.Rect.Center.X, player.Rect.Bottom)) 
                 {
                     player.IsColliding = true;
-                    startY = p.Bounds.Y - player.Rect.Height;
+                    //startY = p.Bounds.Y - player.Rect.Height;
                 }
             }
 
@@ -170,13 +173,19 @@ namespace Runner
             }
             #endregion
 
+            if (currentKeyboard.IsKeyDown(Keys.D))
+                player.Pos = new Vector2(player.Pos.X + 3, player.Pos.Y);
+            if (currentKeyboard.IsKeyDown(Keys.A))
+                player.Pos = new Vector2(player.Pos.X - 3, player.Pos.Y);
+
             foreach (Platform p in platforms)
             {
-                p.Pos = new Vector2(p.Pos.X - 5, p.Pos.Y);
+               //p.Pos = new Vector2(p.Pos.X - 5, p.Pos.Y);
             }
 
-
-            if (!jumping && !player.IsColliding)
+            if (player.IsColliding)
+                player.Pos = new Vector2(player.Pos.X, player.Pos.Y - 4);
+            
                 player.Pos = new Vector2(player.Pos.X, player.Pos.Y + 4);
 
             //end stuff
@@ -202,7 +211,10 @@ namespace Runner
             {
                 spriteBatch.Draw(bubble, p.Bounds, Color.White);
             }
-            
+            if (player.IsColliding)
+                spriteBatch.DrawString(font, "IsColliding = true", new Vector2(0, 0), Color.Black);
+            if (!player.IsColliding)
+                spriteBatch.DrawString(font, "IsColliding = false", new Vector2(0, 0), Color.Black);
             spriteBatch.End();
 
             base.Draw(gameTime);
