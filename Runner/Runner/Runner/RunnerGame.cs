@@ -14,6 +14,8 @@ namespace Runner
     /// <summary>
     /// This is the main type for your game
     /// </summary>
+    /// 
+
     public class RunnerGame : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
@@ -31,13 +33,14 @@ namespace Runner
 
         SpriteFont font;
 
+        Random rand;
+
         Platform[] platforms;
 
         Player player;
 
         bool jumping;
-        bool falling;
-        float startY;
+        bool initJump;
         float jumpHeight;
         float maxJump;
         int jumpTimer;
@@ -46,6 +49,9 @@ namespace Runner
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = 1280;
         }
 
         /// <summary>
@@ -59,26 +65,18 @@ namespace Runner
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+
             player = new Player(new Vector2(100, 100));
 
             prevKeyboard = Keyboard.GetState();
             prevMouse = Mouse.GetState();
+            rand = new Random();
 
-
-            //platforms init creation
-            platforms = new Platform[15];
-            for (int i = 0; i < 15; i++)
-            {
-                platforms[i] = new Platform(Size.medium, new Vector2(90 + (i * 200), 250));
-            }
-
-
-            jumping = false;
-            falling = false;
+            jumping = false
+            initJump = false;
             maxJump = 25;
             jumpHeight = 0;
             jumpTimer = 60;
-            startY = 0;
 
             base.Initialize();
         }
@@ -97,6 +95,21 @@ namespace Runner
             bubble = Content.Load<Texture2D>(@"Misc//bubble");
             playerTex = Content.Load<Texture2D>(@"Player//player");
             font = Content.Load<SpriteFont>("font");
+
+            //platforms init creation
+            platforms = new Platform[6];
+            for (int i = 0; i < 6; i++)
+            {
+                int pType = rand.Next(5);
+                if(pType == 0)
+                    platforms[i] = new Platform(Size.small, new Vector2(rand.Next(100) + (i * 200), rand.Next(200, 520)));
+                if (pType >= 1 && pType < 3)
+                    platforms[i] = new Platform(Size.medium, new Vector2(rand.Next(100) + (i * 200), rand.Next(200, 520)));
+                if (pType >= 3)
+                    platforms[i] = new Platform(Size.large, new Vector2(rand.Next(100) + (i * 200), rand.Next(200, 520)));
+            }
+
+            
 
             // TODO: use this.Content to load your game content here
         }
@@ -131,7 +144,7 @@ namespace Runner
             if (currentKeyboard.IsKeyDown(Keys.Space) && !prevKeyboard.IsKeyDown(Keys.Space) && !jumping)
             {
                 jumping = true;
-                startY = player.Pos.Y;
+                initJump = true;
             }
 
             player.IsColliding = false;
@@ -144,33 +157,23 @@ namespace Runner
                 }
             }
 
-            if (jumping)
+            if (!currentKeyboard.IsKeyDown(Keys.Space) && initJump)
             {
-                jumpTimer--;
-                if (jumpTimer == 0)
-                {
-                    jumping = false;
-                    falling = true;
-                    jumpTimer = 60;
-                }
+                jumping = false;
+                initJump = false;
+                jumpTimer = 0;
             }
-            if (currentKeyboard.IsKeyDown(Keys.Space) && jumping)
+
+            if (currentKeyboard.IsKeyDown(Keys.Space) && jumping && jumpTimer < 40)
             {
                 jumpHeight++;
+                jumpTimer++;
                 if(jumpHeight < maxJump)
-                    player.Pos = new Vector2(player.Pos.X, player.Pos.Y - 3);
+                    player.Pos = new Vector2(player.Pos.X, player.Pos.Y - 6);
             }
-            if (falling)
-            {
-                player.Pos = new Vector2(player.Pos.X, player.Pos.Y + 5);
+            if (!jumping && player.IsColliding)
+                jumpHeight = 0;
 
-                if (player.Pos.Y >= startY)
-                {
-                    falling = false;
-                    jumpHeight = 0;
-                    player.Pos = new Vector2(player.Pos.X, startY);
-                }
-            }
             #endregion
 
             if (currentKeyboard.IsKeyDown(Keys.D))
@@ -178,14 +181,28 @@ namespace Runner
             if (currentKeyboard.IsKeyDown(Keys.A))
                 player.Pos = new Vector2(player.Pos.X - 3, player.Pos.Y);
 
+            #region platform handling
             foreach (Platform p in platforms)
             {
-               //p.Pos = new Vector2(p.Pos.X - 5, p.Pos.Y);
-            }
+               p.Pos = new Vector2(p.Pos.X - 3, p.Pos.Y);
+               if (p.Bounds.Right < 0)
+               {
+                   int pType = rand.Next(5);
+                   if (pType == 0)
+                       p.setType(Size.small);
+                   if (pType >= 1 && pType < 4)
+                       p.setType(Size.medium);
+                   if (pType >= 4)
+                       p.setType(Size.large);
 
-            if (player.IsColliding)
-                player.Pos = new Vector2(player.Pos.X, player.Pos.Y - 4);
-            
+                   p.Pos = new Vector2(1280, rand.Next(200, 520));
+
+               }
+            }
+            #endregion
+
+            //gravity
+            if (!player.IsColliding && !jumping)
                 player.Pos = new Vector2(player.Pos.X, player.Pos.Y + 4);
 
             //end stuff
@@ -210,6 +227,7 @@ namespace Runner
             foreach (Platform p in platforms)
             {
                 spriteBatch.Draw(bubble, p.Bounds, Color.White);
+                //spriteBatch.Draw(skyBG, p.getCollisionRect(), Color.Green);
             }
             if (player.IsColliding)
                 spriteBatch.DrawString(font, "IsColliding = true", new Vector2(0, 0), Color.Black);

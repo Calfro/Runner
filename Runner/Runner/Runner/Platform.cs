@@ -28,18 +28,18 @@ namespace Runner
 
             if (size == Size.small)
             {
-                bounds = new Rectangle((int)pos.X, (int)pos.Y, 64, 32);
-                collisionRect = new Rectangle((int)pos.X, (int)pos.Y, 16, 5);
+                bounds = new Rectangle((int)pos.X, (int)pos.Y, 60, 30);
+                collisionRect = new Rectangle((int)pos.X, (int)pos.Y, 60, 5);
             }
             if (size == Size.medium)
             {
-                bounds = new Rectangle((int)pos.X, (int)pos.Y, 128, 32);
-                collisionRect = new Rectangle((int)pos.X, (int)pos.Y, 32, 5);
+                bounds = new Rectangle((int)pos.X, (int)pos.Y, 90, 30);
+                collisionRect = new Rectangle((int)pos.X, (int)pos.Y, 90, 5);
             }
             if (size == Size.large)
             {
-                bounds = new Rectangle((int)pos.X, (int)pos.Y, 256, 64);
-                collisionRect = new Rectangle((int)pos.X, (int)pos.Y, 64, 5);
+                bounds = new Rectangle((int)pos.X, (int)pos.Y, 120, 30);
+                collisionRect = new Rectangle((int)pos.X, (int)pos.Y, 120, 5);
             }
 
         }
@@ -72,6 +72,11 @@ namespace Runner
                 this.collisionRect = new Rectangle(value.X, value.Y, collisionRect.Width, collisionRect.Height);
                 this.pos = new Vector2(value.X, value.Y);
             }
+        }
+
+        public void setType(Size s)
+        {
+            size = s;
         }
 
         public Rectangle getCollisionRect()
