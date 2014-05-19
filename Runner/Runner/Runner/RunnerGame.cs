@@ -44,6 +44,7 @@ namespace Runner
         float jumpHeight;
         float maxJump;
         int jumpTimer;
+        int SCORE;
 
         public RunnerGame()
         {
@@ -72,11 +73,13 @@ namespace Runner
             prevMouse = Mouse.GetState();
             rand = new Random();
 
-            jumping = false
+            jumping = false;
             initJump = false;
             maxJump = 25;
             jumpHeight = 0;
-            jumpTimer = 60;
+            jumpTimer = 40;
+
+            SCORE = 0;
 
             base.Initialize();
         }
@@ -102,11 +105,11 @@ namespace Runner
             {
                 int pType = rand.Next(5);
                 if(pType == 0)
-                    platforms[i] = new Platform(Size.small, new Vector2(rand.Next(100) + (i * 200), rand.Next(200, 520)));
+                    platforms[i] = new Platform(Size.small, new Vector2(rand.Next(50) + (i * 200), rand.Next(200, 520)));
                 if (pType >= 1 && pType < 3)
-                    platforms[i] = new Platform(Size.medium, new Vector2(rand.Next(100) + (i * 200), rand.Next(200, 520)));
+                    platforms[i] = new Platform(Size.medium, new Vector2(rand.Next(50) + (i * 200), rand.Next(200, 520)));
                 if (pType >= 3)
-                    platforms[i] = new Platform(Size.large, new Vector2(rand.Next(100) + (i * 200), rand.Next(200, 520)));
+                    platforms[i] = new Platform(Size.large, new Vector2(rand.Next(50) + (i * 200), rand.Next(200, 520)));
             }
 
             
@@ -137,7 +140,8 @@ namespace Runner
             currentKeyboard = Keyboard.GetState();
             currentMouse = Mouse.GetState();
 
-            
+            if (GraphicsDevice.Viewport.Bounds.Contains((int)player.Pos.X, (int)player.Pos.Y))
+                SCORE++;
 
             #region Jumping
             //Jump!
@@ -157,17 +161,25 @@ namespace Runner
                 }
             }
 
+            if (jumping)
+            {
+                jumpTimer--;
+                if (jumpTimer == 0)
+                {
+                    jumpTimer = 40;
+                    jumping = false;
+                }
+            }
+
             if (!currentKeyboard.IsKeyDown(Keys.Space) && initJump)
             {
                 jumping = false;
                 initJump = false;
-                jumpTimer = 0;
             }
 
-            if (currentKeyboard.IsKeyDown(Keys.Space) && jumping && jumpTimer < 40)
+            if (currentKeyboard.IsKeyDown(Keys.Space) && jumping)
             {
                 jumpHeight++;
-                jumpTimer++;
                 if(jumpHeight < maxJump)
                     player.Pos = new Vector2(player.Pos.X, player.Pos.Y - 6);
             }
@@ -229,10 +241,15 @@ namespace Runner
                 spriteBatch.Draw(bubble, p.Bounds, Color.White);
                 //spriteBatch.Draw(skyBG, p.getCollisionRect(), Color.Green);
             }
-            if (player.IsColliding)
-                spriteBatch.DrawString(font, "IsColliding = true", new Vector2(0, 0), Color.Black);
-            if (!player.IsColliding)
-                spriteBatch.DrawString(font, "IsColliding = false", new Vector2(0, 0), Color.Black);
+            //if (player.IsColliding)
+              //  spriteBatch.DrawString(font, "IsColliding = true", new Vector2(0, 0), Color.Black);
+            //if (!player.IsColliding)
+              //  spriteBatch.DrawString(font, "IsColliding = false", new Vector2(0, 0), Color.Black);
+            //if (jumping)
+              //  spriteBatch.DrawString(font, "Jumping", new Vector2(0, 30), Color.Black);
+
+            spriteBatch.DrawString(font, "SCORE: " + SCORE, new Vector2(550, 0), Color.Black);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
