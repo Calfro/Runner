@@ -140,11 +140,16 @@ namespace Runner
             currentKeyboard = Keyboard.GetState();
             currentMouse = Mouse.GetState();
 
+            if (currentKeyboard.IsKeyDown(Keys.R) && !prevKeyboard.IsKeyDown(Keys.R))
+                Initialize();
+
             if (GraphicsDevice.Viewport.Bounds.Contains((int)player.Pos.X, (int)player.Pos.Y))
                 SCORE++;
 
             #region Jumping
+
             //Jump!
+
             if (currentKeyboard.IsKeyDown(Keys.Space) && !prevKeyboard.IsKeyDown(Keys.Space) && !jumping)
             {
                 jumping = true;
@@ -157,6 +162,7 @@ namespace Runner
                 if (p.getCollisionRect().Contains(player.Rect.Center.X, player.Rect.Bottom)) 
                 {
                     player.IsColliding = true;
+                    jumpTimer = 40;
                     //startY = p.Bounds.Y - player.Rect.Height;
                 }
             }
@@ -164,9 +170,8 @@ namespace Runner
             if (jumping)
             {
                 jumpTimer--;
-                if (jumpTimer == 0)
+                if (jumpTimer <= 0)
                 {
-                    jumpTimer = 40;
                     jumping = false;
                 }
             }
@@ -207,8 +212,26 @@ namespace Runner
                    if (pType >= 4)
                        p.setType(Size.large);
 
-                   p.Pos = new Vector2(1280, rand.Next(200, 520));
 
+                   int i = 0;
+                   int index = 0;
+                   foreach (Platform p2 in platforms)
+                   {
+                       if (p == platforms[i])
+                           index = i;
+                       i++;
+                   }
+
+                   int difX = 100;
+                   int difY = 50;
+                   p.Pos = new Vector2(1280, rand.Next(200, 520));
+                   if (i != platforms.Length)
+                   {
+                       while (difX < Math.Abs((p.Pos.X - platforms[i + 1].Pos.X)) && difY < Math.Abs((p.Pos.Y - platforms[i + 1].Pos.Y)))
+                       {
+                           p.Pos = new Vector2(1280, rand.Next(200, 520));
+                       }
+                   }
                }
             }
             #endregion
@@ -245,8 +268,8 @@ namespace Runner
               //  spriteBatch.DrawString(font, "IsColliding = true", new Vector2(0, 0), Color.Black);
             //if (!player.IsColliding)
               //  spriteBatch.DrawString(font, "IsColliding = false", new Vector2(0, 0), Color.Black);
-            //if (jumping)
-              //  spriteBatch.DrawString(font, "Jumping", new Vector2(0, 30), Color.Black);
+            
+                //spriteBatch.DrawString(font, "JumpTimer: " + jumpTimer, new Vector2(0, 30), Color.Black);
 
             spriteBatch.DrawString(font, "SCORE: " + SCORE, new Vector2(550, 0), Color.Black);
 
