@@ -100,16 +100,16 @@ namespace Runner
             font = Content.Load<SpriteFont>("font");
 
             //platforms init creation
-            platforms = new Platform[6];
-            for (int i = 0; i < 6; i++)
+            platforms = new Platform[8];
+            for (int i = 0; i < 8; i++)
             {
                 int pType = rand.Next(5);
                 if(pType == 0)
-                    platforms[i] = new Platform(Size.small, new Vector2(rand.Next(50) + (i * 200), rand.Next(200, 520)));
+                    platforms[i] = new Platform(Size.small, new Vector2(rand.Next(50) + (i * 150), rand.Next(300, 400)));
                 if (pType >= 1 && pType < 3)
-                    platforms[i] = new Platform(Size.medium, new Vector2(rand.Next(50) + (i * 200), rand.Next(200, 520)));
+                    platforms[i] = new Platform(Size.medium, new Vector2(rand.Next(50) + (i * 150), rand.Next(300, 400)));
                 if (pType >= 3)
-                    platforms[i] = new Platform(Size.large, new Vector2(rand.Next(50) + (i * 200), rand.Next(200, 520)));
+                    platforms[i] = new Platform(Size.large, new Vector2(rand.Next(50) + (i * 150), rand.Next(300, 400)));
             }
 
             
@@ -222,14 +222,29 @@ namespace Runner
                        i++;
                    }
 
-                   int difX = 100;
-                   int difY = 50;
-                   p.Pos = new Vector2(1280, rand.Next(200, 520));
-                   if (i != platforms.Length)
+                   int difY = 100;
+                   bool test = false;
+                   p.Pos = new Vector2(1280 + rand.Next(50), rand.Next(200, 520));
+                   if (i != 0)
                    {
-                       while (difX < Math.Abs((p.Pos.X - platforms[i + 1].Pos.X)) && difY < Math.Abs((p.Pos.Y - platforms[i + 1].Pos.Y)))
+                       while (!test)
+                       {
+                           p.Pos = new Vector2(1280 + rand.Next(50), rand.Next(200, 520));
+                           if (difY > Math.Abs((p.Pos.Y - platforms[i - 1].Pos.Y)))
+                           {
+                               test = true;
+                           }
+                       }
+                   }
+                   else
+                   {
+                       while (!test)
                        {
                            p.Pos = new Vector2(1280, rand.Next(200, 520));
+                           if (difY > Math.Abs((p.Pos.Y - platforms[i-1].Pos.Y)))
+                           {
+                               test = true;
+                           }
                        }
                    }
                }
